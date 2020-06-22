@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
-import { Form, Input, Button, Checkbox, Row, Col } from 'antd';
+import { Form, Input, Button, Checkbox, Row, Col, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { createBrowserHistory } from 'history';
 import { getQueriesForElement } from '@testing-library/react';
@@ -8,6 +8,8 @@ import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { gql } from "apollo-boost";
 let history = createBrowserHistory();
 var crypto = require('crypto');
+
+const { Text } = Typography;
 
 const GET_USER =  gql`
     query userByEmail($email : String!, $password : String!){
@@ -19,7 +21,7 @@ const GET_USER =  gql`
       }
     }`;
 
-const Login = () => {
+const Login = (props) => {
 
   const onFinish = values => {
     console.log('Received values of form: ', values);
@@ -27,18 +29,23 @@ const Login = () => {
   };
 
  useEffect(()=>{
-   console.log(data)
-      if(data && data.userByEmail){
+   if(data) {
+      if(data.userByEmail){
           const user = data.userByEmail;
           if(user.email){
-            history.push('/products')
+            props.history.push('/products')
           }
       }
+      else if(email && password) {
+          setError("Incorrect email or password")
+      }
+   }
  })
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [getUser,{loading, error, data}] = useLazyQuery(GET_USER);
+  const [userError, setError] = useState("")
  
   return (
   <Row>
@@ -53,7 +60,10 @@ const Login = () => {
     >
       <Form.Item
         name="email"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
+        rules={[{ required: true, message: 'Please input your Username!' }, {
+          type: 'email',
+          message: 'The input is not valid E-mail!',
+        }]}
       >
         <Input 
         prefix={<UserOutlined className="site-form-item-icon" />} 
@@ -76,12 +86,13 @@ const Login = () => {
       </Form.Item>
 
       <Form.Item>
-       <Link to="/products"><Button type="primary" htmlType="submit" className="login-form-button" onClick={()=> {}}>
+        <Button type="primary" htmlType="submit" className="login-form-button" onClick={()=> {}}>
           Log in
         </Button>
-      </Link>
+
         Or <a href="/register">register now!</a>
       </Form.Item>
+      <Text type="danger">{userError}</Text> 
     </Form>
     </Col>
     <Col span={2}/>

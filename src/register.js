@@ -9,7 +9,9 @@ import {
   Col,
   Checkbox,
   Button,
-  AutoComplete
+  AutoComplete,
+  Alert,
+  message
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { gql } from "apollo-boost";
@@ -96,7 +98,7 @@ mutation addUser($firstName : String, $lastName : String, $email : String, $phon
 }
 `;
 
-const RegistrationForm = () => {
+const RegistrationForm = (props) => {
 
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
   const [firstName, setFirstname] = useState('');
@@ -115,6 +117,16 @@ const RegistrationForm = () => {
     obj = _.omit(Object.assign(obj,values),['confirm']);
      addUser({ variables: obj });
   };
+
+  useEffect(()=>{
+    console.log(data);
+    if(data && data.addUser) {
+      message.success({content :'User Registered sucessfully', duration : 1});
+      setTimeout(() => {
+         props.history.push("/")
+      },1000)
+    }
+  })
 
 
   const prefixSelector = (
@@ -216,7 +228,7 @@ const RegistrationForm = () => {
         rules={[
           {
             required: true,
-            message: 'Please input your nickname!',
+            message: 'Please input your firstname!',
             whitespace: true,
           },
         ]}
@@ -232,7 +244,7 @@ const RegistrationForm = () => {
         rules={[
           {
             required: true,
-            message: 'Please input your nickname!',
+            message: 'Please input your lastname!',
             whitespace: true,
           },
         ]}
