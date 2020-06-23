@@ -120,10 +120,10 @@ const RegistrationForm = (props) => {
 
   useEffect(()=>{
     if(data && data.addUser) {
-      message.success({content :'User Registered sucessfully', duration : 1});
+      message.success({content :'User Registered sucessfully', duration : 2});
       setTimeout(() => {
          props.history.push("/")
-      },1000)
+      },2000)
     }
   })
 

@@ -28,7 +28,7 @@ const Users = () => {
                    <Row>
                         {data.users.map(({ firstName, lastName, email, phone }) => (
                             <Space direction="vertical">
-                                <Card title={firstName + " " + lastName} extra={<a href="#">More</a>} style={{ width: 300 }}>
+                                <Card title={firstName + " " + lastName} style={{ width: 300 }}>
                                         <p>{email}</p>
                                         <p>{phone}</p>
                                 </Card>

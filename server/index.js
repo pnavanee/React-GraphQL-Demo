@@ -1,7 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server');
 var { buildSchema } = require('graphql');
 var crypto = require('crypto');
-var {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserByEmail, getProductById} = require('./actions');
+var {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserByEmail, getProductById, addProduct} = require('./actions');
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
@@ -51,6 +51,7 @@ const typeDefs = gql`
  
   type Mutation {
     addUser(firstName : String, lastName : String, email : String, phone : String, password : String): User
+    addProduct(title : String, description : String) : Product
     updateProduct(id: Int!, title: String, description: String): Product
     deleteProduct(id: Int!) : Boolean
   }
@@ -70,6 +71,7 @@ const resolvers = {
     },
     Mutation : {
       addUser : (args, req) => createUser(req),
+      addProduct : (args, req) => addProduct(req),
       updateProduct : (args, req) => updateProduct(req),
       deleteProduct : (args, req) => deleteProduct(req)
     }

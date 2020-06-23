@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import client from './apollo-client';
 import { gql } from "apollo-boost";
-import { Card, Row, Col, Space } from 'antd';
+import { Card, Row, Col, Space, Button } from 'antd';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { DeleteOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import {AppHeader} from './comp-utils/app-header';
+import { PlusCircleFilled } from '@ant-design/icons';
 
 const PRODUCTS =  gql`
     {
@@ -38,12 +39,15 @@ const Products = () => {
         return  <div>
                 <AppHeader/>
                    <Row>
-                      <h1>Products</h1>
+                     <Col span={12}><h1>Products</h1></Col>
+                     <Col span={10}>
+                       <Link to="/product/add"><Button type="primary" style={{float : "right"}}>Add Product</Button></Link>
+                       </Col>
                    </Row>
                    <Row>
                         {data.products.map(({ id, title, description }) => (
                             <Space direction="vertical">
-                                   <Card title={title} extra={<a href="#">More</a>} style={{ width: 300 }}>
+                                   <Card title={title} style={{ width: 300, height:200, marginLeft:10, marginBottom:10 }}>
                                         <Link to={`/product/${id}`}> <p>{description}</p> </Link>
                                         <DeleteOutlined onClick={()=>remove(id)}/>
                                    </Card>

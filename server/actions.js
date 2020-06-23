@@ -17,6 +17,11 @@ const createUser = async (user) => {
   return user;
 }
 
+const addProduct = async(product) => {
+     let res = await axios.post(`${END_POINT}/products`, product);
+     return product;
+}
+
 const updateProduct = async(reqData) => {
   const id = reqData.id;
   const data = _.omit(reqData, ['id']);
@@ -55,4 +60,4 @@ const getProductById = async(data) => {
   return res.data;
 }
 
-module.exports = {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserById, getUserByEmail, getProductById};
+module.exports = {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserById, getUserByEmail, getProductById, addProduct};

@@ -35,9 +35,12 @@ function App() {
         <Switch>
         <AuthRoute exact path='/' component={Login} />
         <AuthRoute path='/register' component={RegistrationForm} />
-      
+          
           <Route path="/products">
                <Products/>
+          </Route>
+          <Route path="/product/add">
+                <ProductEdit/>
           </Route>
           <Route path="/product/:id">
                 <ProductEdit/>

@@ -20,6 +20,14 @@ mutation updateProduct($id : Int!, $title : String, $description : String) {
 }
 `;
 
+const ADD_PRODUCT = gql`
+mutation addProduct($title : String, $description : String){
+   addProduct(title : $title, description : $description){
+       title 
+       description
+   }
+}`
+
 const GET_PRODUCT = gql`
   query productById($id : Int!){
      productById(id : $id){
@@ -39,27 +47,35 @@ const layout = {
 const ProductEdit = (props) => {
 
     let { id } = useParams();
-  
+    const isAdd = id ? false : true;
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [updateProduct] = useMutation(UPDATE_PRODUCT);
-    const { loading, error, data } = useQuery(GET_PRODUCT, {variables : {id : parseInt(id)}});
+    const [addProduct] = useMutation(ADD_PRODUCT);
+    const { loading, error, data } = useQuery(GET_PRODUCT, {variables : {id : parseInt(id) }, skip : isAdd});
     const [initValue, setInitValue] = useState(false)
     const [form] = Form.useForm();
 
   const onFinish = values => {
-    console.log('Received values of form: ', values);
+   if(isAdd) {  
+       addProduct({variables : {title : title, description : description}}).then(({data})=>{
+        if(data && data.addProduct) {
+          message.success({content :'Product added sucessfully', duration : 1});
+        }
+      })
+  }
+  else {
     updateProduct({ variables: { id: parseInt(id), title : title, description : description } }).then(({data})=>{
       if(data && data.updateProduct) {
         message.success({content :'Product updated sucessfully', duration : 1});
       }
     })
+  }
 
   };
 
   
   useEffect(() => {
-      console.log(data);
       if(data && data.productById && !initValue){
           let product = data.productById;
           setTitle(product.title);
@@ -67,20 +83,19 @@ const ProductEdit = (props) => {
           setInitValue(true);
       } 
 
-  }, [initValue])
+  })
 
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  console.log(loading)
   return (
   <div>
   <AppHeader/>
   <Row>
     <Col span={2}/>
     <Col span={8}>
-    <h1>Product Edit</h1>
+    <h1>{isAdd ? "Product Add" : "Product Edit"}</h1>
     <Form
            {...layout}
            name="basic"
@@ -121,7 +136,7 @@ const ProductEdit = (props) => {
 
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button">
-           Update
+          {isAdd ? "Add" : "Update"}
         </Button>
       </Form.Item>
    </Form>

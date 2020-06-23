@@ -6,7 +6,7 @@ import {
 
 const LogoutBtn = () => {
     return (<Link to="/">
-               <Button type="primary" htmlType="submit" className="login-form-button" style={{float : "right"}}>
+               <Button type="primary" htmlType="submit" className="login-form-button">
                   Logout
                </Button>
             </Link>)
