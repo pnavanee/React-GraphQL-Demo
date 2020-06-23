@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import client from './apollo-client';
 import { gql } from "apollo-boost";
 import { Card, Row, Col, Space } from 'antd';
@@ -28,6 +28,10 @@ const Products = () => {
         }
         const { loading, error, data, refetch } = useQuery(PRODUCTS);
         const [deleteProduct, {id}] = useMutation(DELETE_PRODUCT);
+
+        useEffect(() => {
+                refetch()
+        },[data])
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;

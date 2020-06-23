@@ -21,6 +21,7 @@ const updateProduct = async(reqData) => {
   const id = reqData.id;
   const data = _.omit(reqData, ['id']);
   let res =  await axios.put(`${END_POINT}/products/${id}`, { title : data.title, description : data.description });
+  console.log(res.data);
   return res.data;
 }
 

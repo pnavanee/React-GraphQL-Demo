@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Input, Button, Checkbox, Row, Col } from 'antd';
+import { Form, Input, Button, Checkbox, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { createBrowserHistory } from 'history';
 import { useMutation } from '@apollo/react-hooks';
-import { gql } from "apollo-boost";
+import { gql, from } from "apollo-boost";
 import { useParams } from "react-router-dom";
 import {AppHeader} from './comp-utils/app-header';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
   
 let history = createBrowserHistory();
 var crypto = require('crypto');
@@ -30,34 +30,50 @@ const GET_PRODUCT = gql`
   }
 `
 
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
 
-const ProductEdit = () => {
+
+const ProductEdit = (props) => {
 
     let { id } = useParams();
+  
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [updateProduct] = useMutation(UPDATE_PRODUCT);
+    const { loading, error, data } = useQuery(GET_PRODUCT, {variables : {id : parseInt(id)}});
+    const [initValue, setInitValue] = useState(false)
+    const [form] = Form.useForm();
 
   const onFinish = values => {
     console.log('Received values of form: ', values);
-    updateProduct({ variables: { id: parseInt(id), title : values.title, description : values.description } });
+    updateProduct({ variables: { id: parseInt(id), title : title, description : description } }).then(({data})=>{
+      if(data && data.updateProduct) {
+        message.success({content :'Product updated sucessfully', duration : 1});
+      }
+    })
+
   };
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [updateProduct, { product }] = useMutation(UPDATE_PRODUCT);
   
   useEffect(() => {
-      if(data && data.productById){
+      console.log(data);
+      if(data && data.productById && !initValue){
           let product = data.productById;
-          setTitle(product.title)
-          setDescription(product.description)
-      }
-    
-  })
+          setTitle(product.title);
+          setDescription(product.description);
+          setInitValue(true);
+      } 
 
-  const { loading, error, data } = useQuery(GET_PRODUCT, {variables : {id : parseInt(id)}});
+  }, [initValue])
+
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-console.log(title);    
+  console.log(loading)
   return (
   <div>
   <AppHeader/>
@@ -66,36 +82,49 @@ console.log(title);
     <Col span={8}>
     <h1>Product Edit</h1>
     <Form
-      name="normal_login"
-      className="login-form"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
+           {...layout}
+           name="basic"
+           form={form}
+           initialValues={{ remember: true }}
+           onFinish={onFinish}
+      
     >
-      <Form.Item
+     <Form.Item>
+        <Input
         name="title"
-      >
-        <Input 
         placeholder="Title" 
         value={title}
         onChange={(e)=>{setTitle(e.target.value)}}
+        rules={[
+          {
+            required: true,
+            message: 'Please input title',
+          },
+        ]}
         />
-      </Form.Item>
-      <Form.Item
-        name="description"
-      >
+     </Form.Item>
+     <Form.Item>
         <Input
+        name="description"
           placeholder="Description"
           value={description}
           onChange={(e)=>{setDescription(e.target.value)}}
+          rules={[
+            {
+              required: true,
+              message: 'Please input description',
+            },
+          ]}
         />
       </Form.Item>
+    
 
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button">
            Update
         </Button>
       </Form.Item>
-    </Form>
+   </Form>
     </Col>
     <Col span={2}/>
  </Row>  
