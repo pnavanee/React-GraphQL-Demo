@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/react-hooks';
 import client from './apollo-client';
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <React.StrictMode>
   <ApolloProvider client={client}>
     <App />

@@ -1,7 +1,14 @@
-const { ApolloServer, gql } = require('apollo-server');
-var { buildSchema } = require('graphql');
-var crypto = require('crypto');
-var {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserByEmail, getProductById, addProduct} = require('./actions');
+import path from 'path';
+import fs from 'fs';
+import React from 'react';
+import express from 'express';
+import ReactDOMServer from  'react-dom/server.js';
+import crypto from 'crypto';
+import { ApolloServer, gql } from 'apollo-server';
+import { buildSchema } from 'graphql';
+import {createUser, getProducts, getUsers, updateProduct, deleteProduct, getUserByEmail, getProductById, addProduct} from './actions';
+
+
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
